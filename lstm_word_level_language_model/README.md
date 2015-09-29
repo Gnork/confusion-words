@@ -21,7 +21,7 @@ or with bumblebee for NVIDIA optimus support on Linux:
 
 ```bash
 cd confusion-words
-optirun python3 lstm_language_model
+optirun python3 lstm_word_level_language_model
 ```
 
 ### Results
