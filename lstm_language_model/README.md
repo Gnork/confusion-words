@@ -26,9 +26,10 @@ optirun python3 lstm_language_model
 
 ### Results
 
-* results for generating sequences and applying language model will be printed
+* results for generating sequences during training will be printed
 * weights and cost function errors will be pickled to files in regular intervals during training
-* saved files can be loaded for continuing training or to apply model without training
+* saved files can be loaded for continuing training
+* saved weights file can be used to apply model and calculate scores in test.py script
 
 ### Acknowledgements
 

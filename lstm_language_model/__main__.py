@@ -39,7 +39,6 @@ preserve_tokens = ['than', 'then', 'except', 'accept', 'well', 'good']
 # complete corpus will be given to lstm for training once per epoch 
 max_epochs = 1
 
-# after training lstm language model will be applied to this confusion set
 # order matters: algorithm will generate rules for occurrences of first word in list
 confusion_set = ['than', 'then']
 
@@ -239,8 +238,8 @@ def resample(embeddings, h_size, min_tokens=0, trials=100, t=1.0):
 
 print('start training...')
 print()
-log_steps = 500
-save_steps = 5000
+log_steps = 100
+save_steps = 100
 
 weights_changed = False
 
@@ -299,59 +298,5 @@ if weights_changed:
     print('final errors saved:')
     print('%s-%d-%d.errors' % (timestamp, e, (i+1)))
     print()
-
-# generate samples
-
-min_tokens = 5
-
-print('genrate samples')
-print('minimum number of tokens per sample: ', min_tokens)
-print()
-for t in [0.8, 1.0, 1.2]:
-    print('temperature: ', t)
-    print()
-    for i in range(20):
-        print(resample(embeddings, h_size, min_tokens=min_tokens, trials=100, t=t))
-    print()
     
-# apply lstm language model to confusion_set
-
-print('apply lstm language model to confusion set...')
-print()
-
-def lm_predictions(samples_0, samples_1, confusion_set, embeddings):
-    predictions_0_correct = []
-    predictions_0_wrong = []
-    for sentence, index in samples_0:
-        S_x, Y = helper.char_sequence(sentence, embeddings)
-        S_y = predict(S_x)
-        predictions_0_correct.append(S_y)
-        sentence[index] = confusion_set[1]
-        S_x, Y = helper.char_sequence(sentence, embeddings)
-        S_y = predict(S_x)
-        predictions_0_wrong.append(S_y)
-    
-    predictions_1_correct = []
-    predictions_1_wrong = []
-    for sentence, index in samples_1:
-        S_x, Y = helper.char_sequence(sentence, embeddings)
-        S_y = predict(S_x)
-        predictions_1_correct.append(S_y)
-        sentence[index] = confusion_set[0]
-        S_x, Y = helper.char_sequence(sentence, embeddings)
-        S_y = predict(S_x)
-        predictions_1_wrong.append(S_y)
-        
-    return [predictions_0_correct, predictions_0_wrong, predictions_1_correct, predictions_1_wrong]
-
-cv_0 = list(helper.acs(sents, preserve_tokens, cv_token=confusion_set[0]))
-cv_1 = list(helper.acs(sents, preserve_tokens, cv_token=confusion_set[1]))
-test_0 = list(helper.acs(sents, preserve_tokens, test_token=confusion_set[0]))
-test_1 = list(helper.acs(sents, preserve_tokens, test_token=confusion_set[1]))
-
-cv_predictions = lm_predictions(cv_0, cv_1, confusion_set, embeddings)
-test_predictions = lm_predictions(test_0, test_1, confusion_set, embeddings)
-
-# find best temperature and threshold combination and print results
-
-helper.lm_results(cv_predictions, test_predictions, cv_0, cv_1, test_0, test_1, embeddings, confusion_set)
+print('done')
